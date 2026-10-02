@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Keuangan - Website Resmi RT 005</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @media print {
+            @page { size: A4 landscape; margin: 10mm; }
+            nav, footer, #mobile-menu, .no-print { display: none !important; }
+            body { background-color: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            .max-w-7xl { max-width: 100% !important; padding: 0 !important; }
+            .pt-28 { padding-top: 0 !important; }
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
+            th, td { border: 1px solid #e5e7eb !important; padding: 4px 6px !important; }
+            .shadow-sm, .rounded-xl, .rounded-2xl { box-shadow: none !important; }
+            
+            /* Untuk mencetak khusus panel tunggakan jika dipanggil via JS */
+            .print-only-tunggakan body * { visibility: hidden; }
+            .print-only-tunggakan #panel-tunggakan, .print-only-tunggakan #panel-tunggakan * { visibility: visible; }
+            .print-only-tunggakan #panel-tunggakan { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 bg-blue-900 text-white z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="bg-white p-1.5 rounded-full text-blue-900">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wider">RT 005</span>
+                </a>
+                
+                <div class="hidden lg:flex space-x-6 text-sm font-medium">
+                    <a href="index.html" class="hover:text-blue-200 transition">Beranda</a>
+                    <a href="struktur.html" class="hover:text-blue-200 transition">Struktur</a>
+                    <a href="dokumentasi.html" class="hover:text-blue-200 transition">Dokumentasi</a>
+                    <a href="keuangan.html" class="text-yellow-400 font-bold border-b-2 border-yellow-400 pb-1">Keuangan Kas</a>
+                    <a href="sekuriti.html" class="hover:text-blue-200 transition">Sekuriti & Darurat</a>
+                </div>
+
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-md hover:bg-blue-800">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-blue-950 px-4 pt-2 pb-4 space-y-2 text-sm">
+            <a href="index.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Beranda</a>
+            <a href="struktur.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Struktur</a>
+            <a href="dokumentasi.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Dokumentasi</a>
+            <a href="keuangan.html" class="block py-2 bg-blue-900 px-3 rounded font-bold">Keuangan Kas</a>
+            <a href="sekuriti.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Sekuriti & Darurat</a>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
+        
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 bg-blue-950 text-white p-6 rounded-2xl shadow-sm no-print">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">Laporan Keuangan Kas RT 005</h1>
+                <p class="text-blue-200 text-sm mt-1">Transparansi dan Akuntabilitas Kas Warga Perumahan Mustika Media Residence</p>
+            </div>
+            <div class="bg-blue-900/80 border border-blue-700/50 p-4 rounded-xl text-xs w-full md:w-auto">
+                <div class="font-semibold text-yellow-400 mb-1 flex items-center gap-1.5">
+                    <i data-lucide="wallet" class="w-4 h-4"></i>
+                    <span>Informasi Pembayaran Kas:</span>
+                </div>
+                <p class="text-gray-200">Bank BCA: <span id="no-rek" class="font-mono font-bold text-white">123-456-7890</span> (a.n Kas RT 005)</p>
+                <button onclick="salinRekening()" class="mt-2 bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold px-3 py-1 rounded transition flex items-center gap-1 text-xs">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span id="btn-copy-text">Salin No. Rekening</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- RINGKASAN KAS TOTAL -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-gray-100 p-5 rounded-xl shadow-sm">
+                <div class="text-amber-600 text-xs font-semibold uppercase tracking-wider">Saldo Bulan Sebelumnya</div>
+                <div id="saldo-awal" class="text-xl font-bold text-amber-900 mt-1">Rp 0</div>
+            </div>
+            <div class="bg-white border border-gray-100 p-5 rounded-xl shadow-sm">
+                <div class="text-emerald-600 text-xs font-semibold uppercase tracking-wider">Pemasukan Bulan Ini</div>
+                <div id="total-pemasukan" class="text-xl font-bold text-emerald-900 mt-1">Rp 0</div>
+            </div>
+            <div class="bg-white border border-gray-100 p-5 rounded-xl shadow-sm">
+                <div class="text-rose-600 text-xs font-semibold uppercase tracking-wider">Pengeluaran Bulan Ini</div>
+                <div id="total-pengeluaran" class="text-xl font-bold text-rose-900 mt-1">Rp 0</div>
+            </div>
+            <div class="bg-blue-900 text-white p-5 rounded-xl shadow-sm">
+                <div class="text-blue-200 text-xs font-semibold uppercase tracking-wider">Saldo Akhir Kas (Total)</div>
+                <div id="saldo-kas" class="text-xl font-bold text-white mt-1">Rp 0</div>
+            </div>
+        </div>
+
+        <!-- RINCIAN PER POS & TABEL (DISAKSIKAN SAAT PRINT) -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 no-print">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5 text-blue-600 shrink-0"></i>
+                        <span>Rincian Sisa Kas Per Pos (<span id="pos-total-kk-title">0</span> KK)</span>
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                        Tarif per KK: Kas RT (<span id="txt-tarif-kasrt" class="font-medium">0</span>), Kas RW (<span id="txt-tarif-kasrw" class="font-medium">0</span>), Dansos RT (<span id="txt-tarif-dansos" class="font-medium">0</span>), Dana Duka (<span id="txt-tarif-duka" class="font-medium">0</span>), K3/Sampah (<span id="txt-tarif-k3" class="font-medium">0</span>), THR K3 (<span id="txt-tarif-thrk3" class="font-medium">0</span>), Keamanan RW (<span id="txt-tarif-keamanan" class="font-medium">0</span>). Total <span id="txt-tarif-total" class="font-semibold text-gray-800">Rp 0</span>.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 self-start md:self-auto">
+                    <button onclick="muatDataRT()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        <span>Refresh Data Blok</span>
+                    </button>
+                    <button onclick="window.print()" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Cetak Laporan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KARTU 7 POS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+                <!-- 7 Pos Cards... -->
+                <div class="bg-indigo-50/60 border border-indigo-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-indigo-900 uppercase tracking-wide border-b border-indigo-200 pb-1 mb-1.5 flex justify-between"><span>Kas RT</span> <span id="card-label-kasrt" class="bg-indigo-200 text-indigo-800 px-1 rounded">7rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-kasrt" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-kasrt" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-indigo-900 pt-1 border-t border-indigo-200 text-xs"><span>Sisa:</span><span id="pos-sisa-kasrt">0</span></div></div></div>
+                <div class="bg-blue-50/60 border border-blue-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-blue-900 uppercase tracking-wide border-b border-blue-200 pb-1 mb-1.5 flex justify-between"><span>Kas RW</span> <span id="card-label-kasrw" class="bg-blue-200 text-blue-800 px-1 rounded">2rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-kasrw" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-kasrw" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-blue-900 pt-1 border-t border-blue-200 text-xs"><span>Sisa:</span><span id="pos-sisa-kasrw">0</span></div></div></div>
+                <div class="bg-pink-50/60 border border-pink-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-pink-900 uppercase tracking-wide border-b border-pink-200 pb-1 mb-1.5 flex justify-between"><span>Dansos RT</span> <span id="card-label-dansos" class="bg-pink-200 text-pink-800 px-1 rounded">7rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-dansos" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-dansos" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-pink-900 pt-1 border-t border-pink-200 text-xs"><span>Sisa:</span><span id="pos-sisa-dansos">0</span></div></div></div>
+                <div class="bg-amber-50/60 border border-amber-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-amber-900 uppercase tracking-wide border-b border-amber-200 pb-1 mb-1.5 flex justify-between"><span>Dana Duka</span> <span id="card-label-duka" class="bg-amber-200 text-amber-800 px-1 rounded">2.5rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-duka" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-duka" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-amber-900 pt-1 border-t border-amber-200 text-xs"><span>Sisa:</span><span id="pos-sisa-duka">0</span></div></div></div>
+                <div class="bg-emerald-50/60 border border-emerald-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-emerald-900 uppercase tracking-wide border-b border-emerald-200 pb-1 mb-1.5 flex justify-between"><span>K3 / Sampah</span> <span id="card-label-k3" class="bg-emerald-200 text-emerald-800 px-1 rounded">15.5rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-k3" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-k3" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-emerald-900 pt-1 border-t border-emerald-200 text-xs"><span>Sisa:</span><span id="pos-sisa-k3">0</span></div></div></div>
+                <div class="bg-teal-50/60 border border-teal-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-teal-900 uppercase tracking-wide border-b border-teal-200 pb-1 mb-1.5 flex justify-between"><span>THR K3</span> <span id="card-label-thrk3" class="bg-teal-200 text-teal-800 px-1 rounded">1rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-thrk3" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-thrk3" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-teal-900 pt-1 border-t border-teal-200 text-xs"><span>Sisa:</span><span id="pos-sisa-thrk3">0</span></div></div></div>
+                <div class="bg-sky-50/60 border border-sky-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-sky-900 uppercase tracking-wide border-b border-sky-200 pb-1 mb-1.5 flex justify-between"><span>Keamanan</span> <span id="card-label-keamanan" class="bg-sky-200 text-sky-800 px-1 rounded">10rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-keamanan" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-keamanan" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-sky-900 pt-1 border-t border-sky-200 text-xs"><span>Sisa:</span><span id="pos-sisa-keamanan">0</span></div></div></div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-gray-600 whitespace-nowrap">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold border-b">
+                        <tr>
+                            <th class="px-3 py-2">Blok/Gang</th><th class="px-3 py-2 text-center">KK</th><th class="px-3 py-2 text-right">Kas RT</th><th class="px-3 py-2 text-right">Kas RW</th><th class="px-3 py-2 text-right">Dansos RT</th><th class="px-3 py-2 text-right">Dana Duka</th><th class="px-3 py-2 text-right">K3/Sampah</th><th class="px-3 py-2 text-right">THR K3</th><th class="px-3 py-2 text-right">Keamanan</th><th class="px-3 py-2 text-right font-bold text-blue-900">Total Setoran</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-pos-body" class="divide-y divide-gray-100"></tbody>
+                    <tfoot class="bg-blue-900 text-white font-bold text-xs">
+                        <tr>
+                            <td class="px-3 py-2">TOTAL</td><td id="foot-total-kk" class="px-3 py-2 text-center">0</td><td id="foot-total-kasrt" class="px-3 py-2 text-right">0</td><td id="foot-total-kasrw" class="px-3 py-2 text-right">0</td><td id="foot-total-dansos" class="px-3 py-2 text-right">0</td><td id="foot-total-duka" class="px-3 py-2 text-right">0</td><td id="foot-total-k3" class="px-3 py-2 text-right">0</td><td id="foot-total-thrk3" class="px-3 py-2 text-right">0</td><td id="foot-total-keamanan" class="px-3 py-2 text-right">0</td><td id="foot-total-setoran" class="px-3 py-2 text-right text-yellow-400">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- PANEL BARU: MONITORING TUNGGAKAN IURAN -->
+        <div id="panel-tunggakan" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 hidden no-print">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-rose-600 shrink-0"></i>
+                        <span>Realisasi & Sisa Tunggakan Iuran (Bulan <span id="lbl-bulan-tunggakan">Ini</span>)</span>
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Monitoring target pembayaran dari tiap blok berdasarkan total Tarif KK.</p>
+                </div>
+                <button onclick="cetakTunggakan()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-200">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>Cetak Tunggakan</span>
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead class="bg-rose-50 text-rose-900 font-semibold border-b border-rose-200">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg">Blok / Gang</th>
+                            <th class="px-4 py-3 text-center">Jml KK</th>
+                            <th class="px-4 py-3 text-right">Target Iuran</th>
+                            <th class="px-4 py-3 text-right text-emerald-700">Sudah Masuk</th>
+                            <th class="px-4 py-3 text-right text-rose-600">Sisa Tunggakan</th>
+                            <th class="px-4 py-3 text-center bg-rose-100 rounded-tr-lg">Estimasi KK Belum Bayar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-tunggakan-body" class="divide-y divide-gray-100">
+                        <!-- Rendered by JS -->
+                    </tbody>
+                    <tfoot class="bg-rose-600 text-white font-bold text-sm">
+                        <tr>
+                            <td class="px-4 py-3 rounded-bl-lg">TOTAL KESELURUHAN</td>
+                            <td id="tg-tot-kk" class="px-4 py-3 text-center">0</td>
+                            <td id="tg-tot-target" class="px-4 py-3 text-right">Rp 0</td>
+                            <td id="tg-tot-masuk" class="px-4 py-3 text-right text-emerald-200">Rp 0</td>
+                            <td id="tg-tot-sisa" class="px-4 py-3 text-right text-yellow-200">Rp 0</td>
+                            <td id="tg-tot-kk-sisa" class="px-4 py-3 text-center rounded-br-lg">0 KK</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- FILTER & TRANSAKSI -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <label for="filter-bulan" class="text-xs font-semibold text-gray-500 whitespace-nowrap">Bulan:</label>
+                    <select id="filter-bulan" onchange="renderTabel()" class="p-2 border rounded-lg text-sm w-full sm:w-auto bg-gray-50 outline-none">
+                       <option value="semua">Semua Bulan</option>
+                       <option value="2026-12">Desember 2026</option>
+                       <option value="2026-11">November 2026</option>
+                       <option value="2026-10">Oktober 2026</option>
+                       <option value="2026-09">September 2026</option>
+                       <option value="2026-08">Agustus 2026</option>
+                       <option value="2026-07">Juli 2026</option>
+                     </select>
+                </div>
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
+                    <input type="text" id="search-input" onkeyup="renderTabel()" placeholder="Cari transaksi / pos..." class="w-full pl-9 pr-3 py-1.5 border rounded-lg text-sm bg-gray-50 focus:bg-white outline-none">
+                </div>
+            </div>
+            <div class="flex items-center gap-2 w-full lg:w-auto justify-end">
+                <button onclick="muatDataKeuangan()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Refresh Mutasi</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TABEL JURNAL -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-600">
+                <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-semibold border-b">
+                    <tr>
+                        <th class="px-6 py-4">Tanggal</th>
+                        <th class="px-6 py-4">Keterangan</th>
+                        <th class="px-6 py-4">Pos Alokasi</th>
+                        <th class="px-6 py-4">Jenis</th>
+                        <th class="px-6 py-4 text-right">Jumlah</th>
+                        <th class="px-6 py-4 text-center no-print">Struk</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-transaksi-body" class="divide-y divide-gray-100">
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                            <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2"></i>
+                            Memuat data laporan...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL BUKTI -->
+    <div id="modal-bukti" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 overflow-hidden relative shadow-xl">
+            <button onclick="tutupModalBukti()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="font-bold text-gray-900 text-base mb-1" id="modal-judul">Bukti Transaksi</h3>
+            <p class="text-xs text-gray-500 mb-4" id="modal-sub"></p>
+            <div class="bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px]">
+                <img id="modal-img" src="" alt="Bukti Transaksi" class="max-h-80 object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        lucide.createIcons();
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // 1. TARIF 7 POS TERBARU
+        let TARIF_KAS_RT = 7000;
+        let TARIF_KAS_RW = 2000;
+        let TARIF_DANSOS = 7000; // Atau 4500 menyesuaikan sheet Anda
+        let TARIF_DUKA   = 2500;
+        let TARIF_K3     = 15500; // Atau 18000 menyesuaikan sheet
+        let TARIF_THRK3  = 1000;
+        let TARIF_KEAMANAN = 10000; // Atau 15000 menyesuaikan sheet
+
+        let dataPosRT = [
+            { rt: 'Salak 11', kk: 32 },
+            { rt: 'Salak 12', kk: 35 },
+            { rt: 'Salak 14', kk: 27 }
+        ];
+
+        function formatSingkat(angka) { return (angka / 1000) + 'rb'; }
+        function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka); }
+        // Dibulatkan agar tidak ada angka desimal berantakan
+        function formatRingkas(angka) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(angka); }
+
+        function salinRekening() {
+            navigator.clipboard.writeText(document.getElementById('no-rek').innerText);
+            const btn = document.getElementById('btn-copy-text');
+            btn.innerText = "Tersalin!";
+            setTimeout(() => { btn.innerText = "Salin No. Rekening"; }, 2000);
+        }
+
+        function cetakTunggakan() {
+            document.body.classList.add('print-only-tunggakan');
+            window.print();
+            document.body.classList.remove('print-only-tunggakan');
+        }
+
+        // ============================================
+        // MASUKKAN LINK API SHEETDB DI BAWAH INI
+        // ============================================
+        const API_GANG = "https://sheetdb.io/api/v1/puojdsvw5hc71?sheet=Data%20Gang";
+        const API_TRANSAKSI = "https://sheetdb.io/api/v1/puojdsvw5hc71";
+
+        function muatDataRT() {
+            fetch(API_GANG)
+                .then(res => { if (!res.ok) throw new Error("Gagal ambil gang"); return res.json(); })
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const barisTarif = data.find(item => (item.Gang || item.RT || '').toUpperCase() === 'TARIF');
+                        if (barisTarif) {
+                            if(barisTarif.Kas_RT) TARIF_KAS_RT = parseFloat(barisTarif.Kas_RT);
+                            if(barisTarif.Kas_RW) TARIF_KAS_RW = parseFloat(barisTarif.Kas_RW);
+                            if(barisTarif.Dansos_RT) TARIF_DANSOS = parseFloat(barisTarif.Dansos_RT);
+                            if(barisTarif.Dana_Duka) TARIF_DUKA = parseFloat(barisTarif.Dana_Duka);
+                            if(barisTarif.K3_Sampah || barisTarif.K3) TARIF_K3 = parseFloat(barisTarif.K3_Sampah || barisTarif.K3);
+                            if(barisTarif.THR_K3) TARIF_THRK3 = parseFloat(barisTarif.THR_K3);
+                            if(barisTarif.Keamanan_RW) TARIF_KEAMANAN = parseFloat(barisTarif.Keamanan_RW);
+                        }
+                        const filtered = data.filter(item => (item.Gang || item.RT || '').toUpperCase() !== 'TARIF');
+                        if (filtered.length > 0) {
+                            dataPosRT = filtered.map(item => ({
+                                rt: item.Gang || item.RT,
+                                kk: parseInt(item.KK || 0)
+                            }));
+                        }
+                    }
+                    renderTabelPos();
+                    hitungKasPerPos();
+                }).catch(err => {
+                    console.warn("Pakai fallback Gang:", err);
+                    renderTabelPos();
+                    hitungKasPerPos();
+                });
+        }
+
+        function renderTabelPos() {
+            const tbody = document.getElementById('tabel-pos-body');
+            tbody.innerHTML = '';
+            let grand = { kk:0, kasrt:0, kasrw:0, dansos:0, duka:0, k3:0, thr:0, keamanan:0, total:0 };
+
+            dataPosRT.forEach(item => {
+                const rt = item.kk * TARIF_KAS_RT;
+                const rw = item.kk * TARIF_KAS_RW;
+                const dansos = item.kk * TARIF_DANSOS;
+                const duka = item.kk * TARIF_DUKA;
+                const k3 = item.kk * TARIF_K3;
+                const thr = item.kk * TARIF_THRK3;
+                const aman = item.kk * TARIF_KEAMANAN;
+                const total = rt + rw + dansos + duka + k3 + thr + aman;
+
+                grand.kk += item.kk; grand.kasrt += rt; grand.kasrw += rw; grand.dansos += dansos; 
+                grand.duka += duka; grand.k3 += k3; grand.thr += thr; grand.keamanan += aman; grand.total += total;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-2 font-medium">${item.rt}</td>
+                        <td class="px-3 py-2 text-center">${item.kk}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(rt)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(rw)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(dansos)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(duka)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(k3)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(thr)}</td>
+                        <td class="px-3 py-2 text-right">${formatRingkas(aman)}</td>
+                        <td class="px-3 py-2 text-right font-bold text-blue-900">${formatRingkas(total)}</td>
+                    </tr>`;
+            });
+
+            document.getElementById('txt-tarif-kasrt').innerText = formatSingkat(TARIF_KAS_RT);
+            document.getElementById('txt-tarif-kasrw').innerText = formatSingkat(TARIF_KAS_RW);
+            document.getElementById('txt-tarif-dansos').innerText = formatSingkat(TARIF_DANSOS);
+            document.getElementById('txt-tarif-duka').innerText = formatSingkat(TARIF_DUKA);
+            document.getElementById('txt-tarif-k3').innerText = formatSingkat(TARIF_K3);
+            document.getElementById('txt-tarif-thrk3').innerText = formatSingkat(TARIF_THRK3);
+            document.getElementById('txt-tarif-keamanan').innerText = formatSingkat(TARIF_KEAMANAN);
+            let tarifTotal = TARIF_KAS_RT + TARIF_KAS_RW + TARIF_DANSOS + TARIF_DUKA + TARIF_K3 + TARIF_THRK3 + TARIF_KEAMANAN;
+            document.getElementById('txt-tarif-total').innerText = formatRupiah(tarifTotal);
+
+            document.getElementById('card-label-kasrt').innerText = formatSingkat(TARIF_KAS_RT);
+            document.getElementById('card-label-kasrw').innerText = formatSingkat(TARIF_KAS_RW);
+            document.getElementById('card-label-dansos').innerText = formatSingkat(TARIF_DANSOS);
+            document.getElementById('card-label-duka').innerText = formatSingkat(TARIF_DUKA);
+            document.getElementById('card-label-k3').innerText = formatSingkat(TARIF_K3);
+            document.getElementById('card-label-thrk3').innerText = formatSingkat(TARIF_THRK3);
+            document.getElementById('card-label-keamanan').innerText = formatSingkat(TARIF_KEAMANAN);
+
+            document.getElementById('pos-total-kk-title').innerText = grand.kk;
+            document.getElementById('foot-total-kk').innerText = grand.kk;
+            document.getElementById('foot-total-kasrt').innerText = formatRingkas(grand.kasrt);
+            document.getElementById('foot-total-kasrw').innerText = formatRingkas(grand.kasrw);
+            document.getElementById('foot-total-dansos').innerText = formatRingkas(grand.dansos);
+            document.getElementById('foot-total-duka').innerText = formatRingkas(grand.duka);
+            document.getElementById('foot-total-k3').innerText = formatRingkas(grand.k3);
+            document.getElementById('foot-total-thrk3').innerText = formatRingkas(grand.thr);
+            document.getElementById('foot-total-keamanan').innerText = formatRingkas(grand.keamanan);
+            document.getElementById('foot-total-setoran').innerText = formatRupiah(grand.total);
+        }
+
+        let daftarTransaksi = [];
+
+        function muatDataKeuangan() {
+            muatDataRT();
+            fetch(API_TRANSAKSI)
+                .then(res => { if(!res.ok) throw new Error("Gagal data"); return res.json(); })
+                .then(data => {
+                    daftarTransaksi = data.map(item => ({
+                        tanggal: item.Tanggal || item.tanggal,
+                        keterangan: item.Keterangan || item.keterangan,
+                        pos: item.Pos || item.pos || item['Pos Alokasi'] || 'Umum',
+                        jenis: (item.Jenis || item.jenis || '').toLowerCase(),
+                        jumlah: parseFloat(item.Jumlah || item.jumlah || 0),
+                        struk: item.Struk || item.struk || ''
+                    }));
+                    daftarTransaksi.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+                    renderTabel();
+                    hitungKasPerPos();
+                }).catch(err => {
+                    console.warn("Gagal tarik transaksi", err);
+                });
+        }
+
+        function hitungKasPerPos() {
+            let totalTarif = TARIF_KAS_RT + TARIF_KAS_RW + TARIF_DANSOS + TARIF_DUKA + TARIF_K3 + TARIF_THRK3 + TARIF_KEAMANAN;
+            let p = { rt: {in:0, out:0}, rw: {in:0, out:0}, dansos: {in:0, out:0}, duka: {in:0, out:0}, k3: {in:0, out:0}, thr: {in:0, out:0}, aman: {in:0, out:0} };
+
+            daftarTransaksi.forEach(item => {
+                let posName = (item.pos || '').toLowerCase();
+                let nominal = item.jumlah;
+
+                if (item.jenis === 'pemasukan') {
+                    if (posName.includes('kas rt')) p.rt.in += nominal;
+                    else if (posName.includes('kas rw')) p.rw.in += nominal;
+                    else if (posName.includes('dansos')) p.dansos.in += nominal;
+                    else if (posName.includes('duka')) p.duka.in += nominal;
+                    else if (posName.includes('k3') || posName.includes('sampah')) { if(posName.includes('thr')) p.thr.in += nominal; else p.k3.in += nominal; }
+                    else if (posName.includes('aman') || posName.includes('keamanan')) p.aman.in += nominal;
+                    else {
+                        if (totalTarif > 0) {
+                            p.rt.in += nominal * (TARIF_KAS_RT / totalTarif);
+                            p.rw.in += nominal * (TARIF_KAS_RW / totalTarif);
+                            p.dansos.in += nominal * (TARIF_DANSOS / totalTarif);
+                            p.duka.in += nominal * (TARIF_DUKA / totalTarif);
+                            p.k3.in += nominal * (TARIF_K3 / totalTarif);
+                            p.thr.in += nominal * (TARIF_THRK3 / totalTarif);
+                            p.aman.in += nominal * (TARIF_KEAMANAN / totalTarif);
+                        }
+                    }
+                } else if (item.jenis === 'pengeluaran') {
+                    if (posName.includes('kas rt')) p.rt.out += nominal;
+                    else if (posName.includes('kas rw')) p.rw.out += nominal;
+                    else if (posName.includes('dansos')) p.dansos.out += nominal;
+                    else if (posName.includes('duka')) p.duka.out += nominal;
+                    else if (posName.includes('k3') || posName.includes('sampah')) { if(posName.includes('thr')) p.thr.out += nominal; else p.k3.out += nominal; }
+                    else if (posName.includes('aman') || posName.includes('keamanan')) p.aman.out += nominal;
+                    else p.rt.out += nominal; 
+                }
+            });
+
+            const updateCard = (id, obj) => {
+                document.getElementById(`pos-masuk-${id}`).innerText = formatRingkas(obj.in);
+                document.getElementById(`pos-keluar-${id}`).innerText = formatRingkas(obj.out);
+                document.getElementById(`pos-sisa-${id}`).innerText = formatRingkas(obj.in - obj.out);
+            };
+
+            updateCard('kasrt', p.rt); updateCard('kasrw', p.rw); updateCard('dansos', p.dansos);
+            updateCard('duka', p.duka); updateCard('k3', p.k3); updateCard('thrk3', p.thr); updateCard('keamanan', p.aman);
+        }
+
+        // FUNGSI BARU: HITUNG TUNGGAKAN
+        function hitungTunggakan(dataTerfilter) {
+            const panelTunggakan = document.getElementById('panel-tunggakan');
+            const tbody = document.getElementById('tabel-tunggakan-body');
+            const filter = document.getElementById('filter-bulan').value;
+            
+            // Jika filter "Semua Bulan", sembunyikan fitur tunggakan karena tidak valid
+            if (filter === 'semua') {
+                panelTunggakan.classList.add('hidden');
+                return;
+            }
+            
+            panelTunggakan.classList.remove('hidden');
+            document.getElementById('lbl-bulan-tunggakan').innerText = filter;
+            tbody.innerHTML = '';
+            
+            let totalTarif = TARIF_KAS_RT + TARIF_KAS_RW + TARIF_DANSOS + TARIF_DUKA + TARIF_K3 + TARIF_THRK3 + TARIF_KEAMANAN;
+            let sumKK = 0, sumTarget = 0, sumMasuk = 0, sumSisa = 0, sumKKSisa = 0;
+
+            dataPosRT.forEach(gang => {
+                let targetBlock = gang.kk * totalTarif;
+                let uangMasukBlock = 0;
+                
+                // Cari transaksi pemasukan di bulan yang dipilih yang namanya mengandung nama gang (contoh: "Iuran Salak 11")
+                dataTerfilter.forEach(trx => {
+                    if (trx.jenis === 'pemasukan' && trx.keterangan.toLowerCase().includes(gang.rt.toLowerCase())) {
+                        uangMasukBlock += trx.jumlah;
+                    }
+                });
+
+                let tunggakan = targetBlock - uangMasukBlock;
+                if (tunggakan < 0) tunggakan = 0; // Jika bayar lebih/lunas
+                
+                let estimasiKK = Math.floor(tunggakan / totalTarif);
+
+                sumKK += gang.kk; sumTarget += targetBlock; sumMasuk += uangMasukBlock; 
+                sumSisa += tunggakan; sumKKSisa += estimasiKK;
+
+                let isLunas = tunggakan === 0;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-rose-50 transition">
+                        <td class="px-4 py-3 font-semibold text-gray-800">${gang.rt}</td>
+                        <td class="px-4 py-3 text-center">${gang.kk}</td>
+                        <td class="px-4 py-3 text-right">${formatRupiah(targetBlock)}</td>
+                        <td class="px-4 py-3 text-right font-semibold text-emerald-600">${formatRupiah(uangMasukBlock)}</td>
+                        <td class="px-4 py-3 text-right font-bold ${isLunas ? 'text-gray-400' : 'text-rose-600'}">${isLunas ? 'LUNAS' : formatRupiah(tunggakan)}</td>
+                        <td class="px-4 py-3 text-center ${isLunas ? 'text-gray-400' : 'font-bold text-rose-600 bg-rose-50'}">${isLunas ? '-' : estimasiKK + ' KK'}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tg-tot-kk').innerText = sumKK;
+            document.getElementById('tg-tot-target').innerText = formatRupiah(sumTarget);
+            document.getElementById('tg-tot-masuk').innerText = formatRupiah(sumMasuk);
+            document.getElementById('tg-tot-sisa').innerText = formatRupiah(sumSisa);
+            document.getElementById('tg-tot-kk-sisa').innerText = sumKKSisa + ' KK';
+        }
+
+        function renderTabel() {
+            const tbody = document.getElementById('tabel-transaksi-body');
+            const filter = document.getElementById('filter-bulan').value;
+            const key = document.getElementById('search-input').value.toLowerCase();
+            tbody.innerHTML = '';
+            
+            let sAwal = 0, tMasuk = 0, tKeluar = 0;
+            let list = [];
+            let dataTunggakanBulanan = []; // Menyimpan transaksi khusus bulan yg difilter
+
+            daftarTransaksi.forEach(item => {
+                if (filter !== 'semua' && item.tanggal < filter + '-01') {
+                    if (item.jenis === 'pemasukan') sAwal += item.jumlah; else sAwal -= item.jumlah;
+                } else if (filter === 'semua' || item.tanggal.startsWith(filter)) {
+                    dataTunggakanBulanan.push(item); // Kumpulkan untuk dihitung tunggakannya
+                    if(!key || item.keterangan.toLowerCase().includes(key) || item.pos.toLowerCase().includes(key)){
+                        list.push(item);
+                        if (item.jenis === 'pemasukan') tMasuk += item.jumlah; else tKeluar += item.jumlah;
+                    }
+                }
+            });
+
+            if (filter !== 'semua' && !key) {
+                tbody.innerHTML += `
+                    <tr class="bg-amber-50 font-semibold">
+                        <td class="px-6 py-4">${filter}-01</td>
+                        <td class="px-6 py-4">Saldo Awal Bulan</td>
+                        <td class="px-6 py-4">-</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded">Saldo</span></td>
+                        <td class="px-6 py-4 text-right text-amber-700 font-bold">${formatRupiah(sAwal)}</td>
+                        <td class="px-6 py-4 text-center">-</td>
+                    </tr>`;
+            }
+
+            if(list.length === 0) {
+                tbody.innerHTML += `<tr><td colspan="6" class="px-6 py-6 text-center text-gray-400">Tidak ada transaksi.</td></tr>`;
+            } else {
+                list.forEach(item => {
+                    const isMasuk = item.jenis === 'pemasukan';
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">${item.tanggal}</td>
+                            <td class="px-6 py-4">${item.keterangan}</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded bg-gray-100">${item.pos || 'Umum'}</span></td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded ${isMasuk ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${isMasuk ? 'Pemasukan' : 'Pengeluaran'}</span></td>
+                            <td class="px-6 py-4 text-right font-semibold ${isMasuk ? 'text-emerald-600' : 'text-rose-600'}">${isMasuk ? '+' : '-'} ${formatRupiah(item.jumlah)}</td>
+                            <td class="px-6 py-4 text-center no-print">
+                                ${item.struk ? `<button onclick="bukaModalBukti('${item.keterangan}', '${item.tanggal}', '${item.struk}')" class="text-blue-600 p-1 bg-blue-50 rounded">Struk</button>` : '-'}
+                            </td>
+                        </tr>`;
+                });
+            }
+
+            document.getElementById('saldo-awal').innerText = formatRupiah(sAwal);
+            document.getElementById('total-pemasukan').innerText = formatRupiah(tMasuk);
+            document.getElementById('total-pengeluaran').innerText = formatRupiah(tKeluar);
+            document.getElementById('saldo-kas').innerText = formatRupiah(sAwal + tMasuk - tKeluar);
+            
+            // Panggil fungsi tunggakan
+            hitungTunggakan(dataTunggakanBulanan);
+            lucide.createIcons();
+        }
+
+        function bukaModalBukti(judul, tanggal, url) {
+            document.getElementById('modal-judul').innerText = judul;
+            document.getElementById('modal-sub').innerText = 'Tanggal: ' + tanggal;
+            let dUrl = url;
+            if (url.includes('drive.google.com')) {
+                const m = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+                if (m && m[1]) dUrl = `https://lh3.googleusercontent.com/d/${m[1]}`;
+            }
+            document.getElementById('modal-img').src = dUrl;
+            document.getElementById('modal-bukti').classList.remove('hidden');
+        }
+        function tutupModalBukti() { document.getElementById('modal-bukti').classList.add('hidden'); }
+
+        muatDataKeuangan();
+    </script>
+</body>
+</html>

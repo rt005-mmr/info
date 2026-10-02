@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekuriti & Darurat - Website Resmi RT 005</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 bg-blue-900 text-white z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="bg-white p-1.5 rounded-full text-blue-900">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wider">RT 005</span>
+                </a>
+                
+                <div class="hidden lg:flex space-x-6 text-sm font-medium">
+                    <a href="index.html" class="hover:text-blue-200 transition">Beranda</a>
+                    <a href="struktur.html" class="hover:text-blue-200 transition">Struktur</a>
+                    <a href="dokumentasi.html" class="hover:text-blue-200 transition">Dokumentasi</a>
+                    <a href="keuangan.html" class="hover:text-blue-200 transition">Keuangan Kas</a>
+                    <a href="sekuriti.html" class="text-yellow-400 font-bold border-b-2 border-yellow-400 pb-1">Sekuriti & Darurat</a>
+                </div>
+
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-md hover:bg-blue-800">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-blue-950 px-4 pt-2 pb-4 space-y-2 text-sm">
+            <a href="index.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Beranda</a>
+            <a href="struktur.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Struktur</a>
+            <a href="dokumentasi.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Dokumentasi</a>
+            <a href="keuangan.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Keuangan Kas</a>
+            <a href="sekuriti.html" class="block py-2 bg-blue-900 px-3 rounded font-bold">Sekuriti & Darurat</a>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900">Kontak Keamanan & Darurat</h1>
+            <p class="text-gray-600 mt-2">Tim pengamanan dan nomor telepon penting untuk wilayah RT 005 / RW 018</p>
+        </div>
+
+        <!-- Sekuriti Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                <div class="w-16 h-16 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="user-check" class="w-8 h-8"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Bpk. Ganteng</h3>
+                <p class="text-xs font-semibold text-blue-800">Komandan Regu (Danru)</p>
+                <div class="mt-4 pt-3 border-t text-xs text-gray-500 space-y-1">
+                    <p><strong>Shift:</strong> Shift Pagi / Utama</p>
+                    <p><strong>Kontak:</strong> 0812-XXXX-XXXX</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                <div class="w-16 h-16 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="shield" class="w-8 h-8"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Bpk. ...............</h3>
+                <p class="text-xs font-semibold text-blue-800">Anggota Keamanan</p>
+                <div class="mt-4 pt-3 border-t text-xs text-gray-500 space-y-1">
+                    <p><strong>Shift:</strong> Shift Siang</p>
+                    <p><strong>Kontak:</strong> 0813-XXXX-XXXX</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                <div class="w-16 h-16 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="shield" class="w-8 h-8"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Bpk. ............</h3>
+                <p class="text-xs font-semibold text-blue-800">Anggota Keamanan</p>
+                <div class="mt-4 pt-3 border-t text-xs text-gray-500 space-y-1">
+                    <p><strong>Shift:</strong> Shift Malam</p>
+                    <p><strong>Kontak:</strong> 0857-XXXX-XXXX</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                <div class="w-16 h-16 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="shield" class="w-8 h-8"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Bpk. ................</h3>
+                <p class="text-xs font-semibold text-blue-800">Anggota Keamanan</p>
+                <div class="mt-4 pt-3 border-t text-xs text-gray-500 space-y-1">
+                    <p><strong>Shift:</strong> Shift Malam</p>
+                    <p><strong>Kontak:</strong> 0878-XXXX-XXXX</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontak Darurat Eksternal -->
+        <div class="bg-white rounded-xl shadow-sm border p-6">
+            <h3 class="font-bold text-gray-900 mb-4 text-base flex items-center gap-2">
+                <i data-lucide="phone-call" class="w-5 h-5 text-red-600"></i>
+                Kontak Darurat & Aparat Wilayah
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div class="p-3 bg-gray-50 rounded-lg border">
+                    <div class="font-bold text-gray-900">Bhabinkamtibmas</div>
+                    <div class="text-xs text-gray-500 mt-1">Polsek Setu / Wilayah</div>
+                    <div class="font-mono text-blue-700 font-semibold mt-2">0812-XXXX-XXXX</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg border">
+                    <div class="font-bold text-gray-900">Babinsa (TNI)</div>
+                    <div class="text-xs text-gray-500 mt-1">Koramil Setu</div>
+                    <div class="font-mono text-blue-700 font-semibold mt-2">0813-XXXX-XXXX</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg border">
+                    <div class="font-bold text-gray-900">Puskesmas / Ambulans</div>
+                    <div class="text-xs text-gray-500 mt-1">Layanan Medis Darurat</div>
+                    <div class="font-mono text-blue-700 font-semibold mt-2">119 / (021) XXXX</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg border">
+                    <div class="font-bold text-gray-900">PLN / Pemadam</div>
+                    <div class="text-xs text-gray-500 mt-1">Gangguan Listrik / Kebakaran</div>
+                    <div class="font-mono text-blue-700 font-semibold mt-2">123 / 113</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING WA BUTTON -->
+    <a href="https://wa.me/6281234567890?text=Halo%20Pengurus%20RT%20005,%20saya%20butuh%20bantuan" target="_blank" class="fixed bottom-6 right-6 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl z-50 flex items-center space-x-2 transition">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
+        <span class="hidden md:inline text-xs font-bold pr-1">Lapor / Bantuan Pengurus</span>
+    </a>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+        <p>&copy; 2026 Pengurus RT 005 / RW 018. Perumahan Mustika Media Residence, Desa Lubang Buaya, Setu, Bekasi.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

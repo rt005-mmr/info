@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Pengurus - Website Resmi RT 005</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 bg-blue-900 text-white z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="bg-white p-1.5 rounded-full text-blue-900">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wider">RT 005</span>
+                </a>
+                
+                <div class="hidden lg:flex space-x-6 text-sm font-medium">
+                    <a href="index.html" class="hover:text-blue-200 transition">Beranda</a>
+                    <a href="struktur.html" class="text-yellow-400 font-bold border-b-2 border-yellow-400 pb-1">Struktur</a>
+                    <a href="dokumentasi.html" class="hover:text-blue-200 transition">Dokumentasi</a>
+                    <a href="keuangan.html" class="hover:text-blue-200 transition">Keuangan Kas</a>
+                    <a href="sekuriti.html" class="hover:text-blue-200 transition">Sekuriti & Darurat</a>
+                </div>
+
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-md hover:bg-blue-800">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-blue-950 px-4 pt-2 pb-4 space-y-2 text-sm">
+            <a href="index.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Beranda</a>
+            <a href="struktur.html" class="block py-2 bg-blue-900 px-3 rounded font-bold">Struktur</a>
+            <a href="dokumentasi.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Dokumentasi</a>
+            <a href="keuangan.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Keuangan Kas</a>
+            <a href="sekuriti.html" class="block py-2 hover:bg-blue-900 px-3 rounded">Sekuriti & Darurat</a>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 space-y-16">
+        <!-- STRUKTUR -->
+        <section>
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-bold text-gray-900">Struktur Pengurus RT 005</h1>
+                <p class="text-gray-600 mt-2">Pelayan dan pengelola kegiatan warga lingkungan RT 005</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                    <div class="w-20 h-20 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">RT</div>
+                    <h3 class="font-bold text-lg">Ketua RT</h3>
+                    <p class="text-blue-600 font-semibold text-sm mb-2">Ketua RT 005</p>
+                    <p class="text-gray-500 text-xs">Bertanggung jawab atas seluruh tata kelola dan koordinasi warga lingkungan RT.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                    <div class="w-20 h-20 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">SK</div>
+                    <h3 class="font-bold text-lg">Sekretaris</h3>
+                    <p class="text-emerald-600 font-semibold text-sm mb-2">Administrasi & Surat</p>
+                    <p class="text-gray-500 text-xs">Mengelola persuratan warga, pendataan, dan arsip dokumen resmi RT.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                    <div class="w-20 h-20 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">BD</div>
+                    <h3 class="font-bold text-lg">Bendahara</h3>
+                    <p class="text-amber-600 font-semibold text-sm mb-2">Keuangan & Anggaran</p>
+                    <p class="text-gray-500 text-xs">Mengelola penerimaan iuran kas RT, penyusunan laporan, dan alokasi dana.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
+                    <div class="w-20 h-20 bg-purple-100 text-purple-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">PB</div>
+                    <h3 class="font-bold text-lg">Seksi Pembangunan</h3>
+                    <p class="text-purple-600 font-semibold text-sm mb-2">Infrastruktur Lingkungan</p>
+                    <p class="text-gray-500 text-xs">Mengoordinasikan perbaikan fasilitas umum dan kerja bakti warga.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROGRAM PEMBANGUNAN -->
+        <section>
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-bold text-gray-900">Program Lingkungan RT</h2>
+                <p class="text-gray-600 mt-2">Rencana dan status realisasi sarana warga RT 005</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl border p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Selesai</span>
+                            <span class="text-xs text-gray-400">Q1 2026</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Perbaikan Drainase Blok</h3>
+                        <p class="text-gray-600 text-sm mb-4">Pembersihan dan pengerukan sedimen selokan di sekitar rumah warga untuk mencegah genangan.</p>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">Berjalan</span>
+                            <span class="text-xs text-gray-400">Q2-Q3 2026</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Lampu Penerangan Lingkungan</h3>
+                        <p class="text-gray-600 text-sm mb-4">Penggantian bohlam lorong antar rumah warga RT 005 menjadi LED agar lebih terang.</p>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full">Rencana</span>
+                            <span class="text-xs text-gray-400">Q4 2026</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Fasilitas Inventaris RT</h3>
+                        <p class="text-gray-600 text-sm mb-4">Penambahan inventaris alat kerja bakti, kursi lipat, dan tenda untuk kegiatan sosial warga.</p>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-amber-500 h-2 rounded-full" style="width: 15%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+        <p>&copy; 2026 Pengurus RT 005 / RW 018. Perumahan Mustika Media Residence, Desa Lubang Buaya, Setu, Bekasi.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
