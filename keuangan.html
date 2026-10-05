@@ -293,6 +293,8 @@
             { rt: 'Salak 14', kk: 27 }
         ];
 
+        let daftarTransaksi = [];
+
         function formatSingkat(angka) { return (angka / 1000) + 'rb'; }
         function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka); }
         function formatRingkas(angka) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(angka); }
@@ -311,46 +313,60 @@
             setTimeout(() => { btn.innerText = "Salin No. Rekening"; }, 2000);
         }
 
-        // LINK API SHEETDB
-        const API_GANG = "https://sheetdb.io/api/v1/puojdsvw5hc71?sheet=Data%20Gang";
-        const API_TRANSAKSI = "https://sheetdb.io/api/v1/puojdsvw5hc71";
+        // URL GOOGLE APPS SCRIPT (GRATIS SELAMANYA)
+        const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbx3xhfV6aAVOxXCvejBJXFuDwQskRO0QAsnzdoxwr0_YIwAIuVog6n7qE776w_h31yarA/exec";
+
+        const API_GANG = URL_WEB_APP + "?sheet=Data%20Gang";
+        const API_TRANSAKSI = URL_WEB_APP + "?sheet=Sheet1";
 
         function muatDataRT() {
-            const icon = document.getElementById('icon-refresh-rt');
-            if (icon) icon.classList.add('animate-spin');
+    const icon = document.getElementById('icon-refresh-rt');
+    if (icon) icon.classList.add('animate-spin');
 
-            return fetch(API_GANG)
-                .then(res => { if (!res.ok) throw new Error("Gagal ambil gang"); return res.json(); })
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const barisTarif = data.find(item => (item.Gang || item.RT || '').toUpperCase() === 'TARIF');
-                        if (barisTarif) {
-                            if(barisTarif.Kas_RT) TARIF_KAS_RT = parseFloat(barisTarif.Kas_RT);
-                            if(barisTarif.Kas_RW) TARIF_KAS_RW = parseFloat(barisTarif.Kas_RW);
-                            if(barisTarif.Dansos_RT) TARIF_DANSOS = parseFloat(barisTarif.Dansos_RT);
-                            if(barisTarif.Dana_Duka) TARIF_DUKA = parseFloat(barisTarif.Dana_Duka);
-                            if(barisTarif.K3_Sampah || barisTarif.K3) TARIF_K3 = parseFloat(barisTarif.K3_Sampah || barisTarif.K3);
-                            if(barisTarif.THR_K3) TARIF_THRK3 = parseFloat(barisTarif.THR_K3);
-                            if(barisTarif.Keamanan_RW) TARIF_KEAMANAN = parseFloat(barisTarif.Keamanan_RW);
-                        }
-                        const filtered = data.filter(item => (item.Gang || item.RT || '').toUpperCase() !== 'TARIF');
-                        if (filtered.length > 0) {
-                            dataPosRT = filtered.map(item => ({
-                                rt: item.Gang || item.RT,
-                                kk: parseInt(item.KK || 0)
-                            }));
-                        }
-                    }
-                    renderTabelPos();
-                    hitungKasPerPos();
-                }).catch(err => {
-                    console.warn("Pakai fallback Gang:", err);
-                    renderTabelPos();
-                    hitungKasPerPos();
-                }).finally(() => {
-                    if (icon) icon.classList.remove('animate-spin');
+    return fetch(API_GANG)
+        .then(res => { if (!res.ok) throw new Error("Gagal ambil gang"); return res.json(); })
+        .then(data => {
+            if (data && data.length > 0) {
+                // Saring baris TARIF
+                const barisTarif = data.find(item => {
+                    const nama = (item.Gang || item.RT || item.gang || item.rt || '').toString().toUpperCase();
+                    return nama === 'TARIF';
                 });
-        }
+
+                if (barisTarif) {
+                    if(barisTarif.Kas_RT) TARIF_KAS_RT = parseFloat(barisTarif.Kas_RT);
+                    if(barisTarif.Kas_RW) TARIF_KAS_RW = parseFloat(barisTarif.Kas_RW);
+                    if(barisTarif.Dansos_RT) TARIF_DANSOS = parseFloat(barisTarif.Dansos_RT);
+                    if(barisTarif.Dana_Duka) TARIF_DUKA = parseFloat(barisTarif.Dana_Duka);
+                    if(barisTarif.K3_Sampah || barisTarif.K3) TARIF_K3 = parseFloat(barisTarif.K3_Sampah || barisTarif.K3);
+                    if(barisTarif.THR_K3) TARIF_THRK3 = parseFloat(barisTarif.THR_K3);
+                    if(barisTarif.Keamanan_RW) TARIF_KEAMANAN = parseFloat(barisTarif.Keamanan_RW);
+                }
+
+                // Saring dan ambil HANYA gang/blok yang ada nama dan jumlah KK-nya (>0)
+                const filtered = data.filter(item => {
+                    const nama = (item.Gang || item.RT || item.gang || item.rt || '').toString().trim();
+                    const kk = parseInt(item.KK || item.kk || 0);
+                    return nama !== '' && nama.toUpperCase() !== 'TARIF' && kk > 0;
+                });
+
+                if (filtered.length > 0) {
+                    dataPosRT = filtered.map(item => ({
+                        rt: item.Gang || item.RT || item.gang || item.rt,
+                        kk: parseInt(item.KK || item.kk || 0)
+                    }));
+                }
+            }
+            renderTabelPos();
+            hitungKasPerPos();
+        }).catch(err => {
+            console.warn("Pakai fallback Gang:", err);
+            renderTabelPos();
+            hitungKasPerPos();
+        }).finally(() => {
+            if (icon) icon.classList.remove('animate-spin');
+        });
+}
 
         function renderTabelPos() {
             const tbody = document.getElementById('tabel-pos-body');
