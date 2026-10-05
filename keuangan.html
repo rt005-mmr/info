@@ -618,5 +618,20 @@
 
         muatDataKeuangan();
     </script>
+    <script>
+  // Blokir Klik Kanan
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Blokir F12, Ctrl+Shift+I (Inspect), dan Ctrl+U (View Source)
+  document.addEventListener('keydown', function(e) {
+    if (
+      e.key === "F12" || 
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) || 
+      (e.ctrlKey && e.key === 'u')
+    ) {
+      e.preventDefault();
+    }
+  });
+</script>
 </body>
 </html>
