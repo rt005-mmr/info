@@ -18,7 +18,6 @@
             th, td { border: 1px solid #e5e7eb !important; padding: 4px 6px !important; }
             .shadow-sm, .rounded-xl, .rounded-2xl { box-shadow: none !important; }
             
-            /* Untuk mencetak khusus panel tunggakan jika dipanggil via JS */
             .print-only-tunggakan body * { visibility: hidden; }
             .print-only-tunggakan #panel-tunggakan, .print-only-tunggakan #panel-tunggakan * { visibility: visible; }
             .print-only-tunggakan #panel-tunggakan { position: absolute; left: 0; top: 0; width: 100%; }
@@ -115,7 +114,6 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-2 self-start md:self-auto">
-                    <!-- TOMBOL REFRESH DATA BLOK DI-PERBAIKI -->
                     <button onclick="muatDataRT()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
                         <i id="icon-refresh-rt" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                         <span>Refresh Data Blok</span>
@@ -203,14 +201,9 @@
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <label for="filter-bulan" class="text-xs font-semibold text-gray-500 whitespace-nowrap">Bulan:</label>
+                    <!-- DROPDOWN OTOMATIS GENERATE VIA JS -->
                     <select id="filter-bulan" onchange="renderTabel()" class="p-2 border rounded-lg text-sm w-full sm:w-auto bg-gray-50 outline-none">
                        <option value="semua">Semua Bulan</option>
-                       <option value="2026-12">Desember 2026</option>
-                       <option value="2026-11">November 2026</option>
-                       <option value="2026-10">Oktober 2026</option>
-                       <option value="2026-09">September 2026</option>
-                       <option value="2026-08">Agustus 2026</option>
-                       <option value="2026-07">Juli 2026</option>
                      </select>
                 </div>
                 <div class="relative w-full sm:w-64">
@@ -219,7 +212,6 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full lg:w-auto justify-end">
-                <!-- TOMBOL REFRESH MUTASI DI-PERBAIKI -->
                 <button onclick="muatDataKeuangan()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
                     <i id="icon-refresh-mutasi" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                     <span>Refresh Mutasi</span>
@@ -296,6 +288,14 @@
         function formatSingkat(angka) { return (angka / 1000) + 'rb'; }
         function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka); }
         function formatRingkas(angka) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(angka); }
+
+        // PERBAIKAN 1: FORMAT TANGGAL INDONESIA
+        function formatTanggal(strTanggal) {
+            if (!strTanggal) return '-';
+            const date = new Date(strTanggal);
+            if (isNaN(date)) return strTanggal;
+            return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+        }
 
         function salinRekening() {
             navigator.clipboard.writeText(document.getElementById('no-rek').innerText);
@@ -416,6 +416,29 @@
 
         let daftarTransaksi = [];
 
+        // PERBAIKAN 2: GENERATE OTOMATIS DROPDOWN BULAN DARI DATA SHEETDB
+        function perbaruiOptionBulan() {
+            const select = document.getElementById('filter-bulan');
+            const setBulan = new Set();
+            
+            daftarTransaksi.forEach(item => {
+                if (item.tanggal && item.tanggal.length >= 7) {
+                    setBulan.add(item.tanggal.substring(0, 7)); // Format YYYY-MM
+                }
+            });
+
+            const arrayBulan = Array.from(setBulan).sort().reverse();
+            let htmlOptions = '<option value="semua">Semua Bulan</option>';
+            
+            arrayBulan.forEach(ym => {
+                const [tahun, bulan] = ym.split('-');
+                const namaBulan = new Date(tahun, parseInt(bulan) - 1).toLocaleString('id-ID', { month: 'long' });
+                htmlOptions += `<option value="${ym}">${namaBulan} ${tahun}</option>`;
+            });
+
+            select.innerHTML = htmlOptions;
+        }
+
         function muatDataKeuangan() {
             const icon = document.getElementById('icon-refresh-mutasi');
             if (icon) icon.classList.add('animate-spin');
@@ -433,10 +456,19 @@
                         struk: item.Struk || item.struk || ''
                     }));
                     daftarTransaksi.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+                    
+                    perbaruiOptionBulan(); // Panggil regenerasi dropdown bulan
                     renderTabel();
                     hitungKasPerPos();
                 }).catch(err => {
                     console.warn("Gagal tarik transaksi", err);
+                    // PERBAIKAN 3: ERROR HANDLING VISUAL SAAT DATA GAGAL DITARIK
+                    document.getElementById('tabel-transaksi-body').innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-rose-600 font-medium">
+                                Gagal memuat data dari server. Silakan periksa koneksi internet Anda lalu klik Refresh Mutasi.
+                            </td>
+                        </tr>`;
                 }).finally(() => {
                     if (icon) icon.classList.remove('animate-spin');
                 });
@@ -570,7 +602,7 @@
             if (filter !== 'semua' && !key) {
                 tbody.innerHTML += `
                     <tr class="bg-amber-50 font-semibold">
-                        <td class="px-6 py-4">${filter}-01</td>
+                        <td class="px-6 py-4">${formatTanggal(filter + '-01')}</td>
                         <td class="px-6 py-4">Saldo Awal Bulan</td>
                         <td class="px-6 py-4">-</td>
                         <td class="px-6 py-4"><span class="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded">Saldo</span></td>
@@ -586,13 +618,13 @@
                     const isMasuk = item.jenis === 'pemasukan';
                     tbody.innerHTML += `
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">${item.tanggal}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${formatTanggal(item.tanggal)}</td>
                             <td class="px-6 py-4">${item.keterangan}</td>
                             <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded bg-gray-100">${item.pos || 'Umum'}</span></td>
                             <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded ${isMasuk ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${isMasuk ? 'Pemasukan' : 'Pengeluaran'}</span></td>
                             <td class="px-6 py-4 text-right font-semibold ${isMasuk ? 'text-emerald-600' : 'text-rose-600'}">${isMasuk ? '+' : '-'} ${formatRupiah(item.jumlah)}</td>
                             <td class="px-6 py-4 text-center no-print">
-                                ${item.struk ? `<button onclick="bukaModalBukti('${item.keterangan}', '${item.tanggal}', '${item.struk}')" class="text-blue-600 p-1 bg-blue-50 rounded">Struk</button>` : '-'}
+                                ${item.struk ? `<button onclick="bukaModalBukti('${item.keterangan}', '${item.tanggal}', '${item.struk}')" class="text-blue-600 p-1 bg-blue-50 rounded hover:bg-blue-100 transition">Struk</button>` : '-'}
                             </td>
                         </tr>`;
                 });
@@ -607,15 +639,23 @@
             lucide.createIcons();
         }
 
+        // PERBAIKAN 4: CONVERT URL GOOGLE DRIVE DENGAN PENANGANAN ERROR BUKTI STRUK
         function bukaModalBukti(judul, tanggal, url) {
             document.getElementById('modal-judul').innerText = judul;
-            document.getElementById('modal-sub').innerText = 'Tanggal: ' + tanggal;
+            document.getElementById('modal-sub').innerText = 'Tanggal: ' + formatTanggal(tanggal);
             let dUrl = url;
             if (url.includes('drive.google.com')) {
                 const m = url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
                 if (m && m[1]) dUrl = `https://lh3.googleusercontent.com/d/${m[1]}`;
             }
-            document.getElementById('modal-img').src = dUrl;
+            
+            const imgElem = document.getElementById('modal-img');
+            imgElem.src = dUrl;
+            imgElem.onerror = function() {
+                this.onerror = null;
+                this.src = 'https://via.placeholder.com/400x300?text=Gambar+Struk+Gagal+Dimuat';
+            };
+            
             document.getElementById('modal-bukti').classList.remove('hidden');
         }
         function tutupModalBukti() { document.getElementById('modal-bukti').classList.add('hidden'); }
