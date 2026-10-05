@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!-- RINCIAN PER POS & TABEL (DISAKSIKAN SAAT PRINT) -->
+        <!-- RINCIAN PER POS & TABEL -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 no-print">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
@@ -115,8 +115,9 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-2 self-start md:self-auto">
+                    <!-- TOMBOL REFRESH DATA BLOK DI-PERBAIKI -->
                     <button onclick="muatDataRT()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        <i id="icon-refresh-rt" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                         <span>Refresh Data Blok</span>
                     </button>
                     <button onclick="window.print()" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
@@ -128,7 +129,6 @@
 
             <!-- KARTU 7 POS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
-                <!-- 7 Pos Cards... -->
                 <div class="bg-indigo-50/60 border border-indigo-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-indigo-900 uppercase tracking-wide border-b border-indigo-200 pb-1 mb-1.5 flex justify-between"><span>Kas RT</span> <span id="card-label-kasrt" class="bg-indigo-200 text-indigo-800 px-1 rounded">7rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-kasrt" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-kasrt" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-indigo-900 pt-1 border-t border-indigo-200 text-xs"><span>Sisa:</span><span id="pos-sisa-kasrt">0</span></div></div></div>
                 <div class="bg-blue-50/60 border border-blue-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-blue-900 uppercase tracking-wide border-b border-blue-200 pb-1 mb-1.5 flex justify-between"><span>Kas RW</span> <span id="card-label-kasrw" class="bg-blue-200 text-blue-800 px-1 rounded">2rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-kasrw" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-kasrw" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-blue-900 pt-1 border-t border-blue-200 text-xs"><span>Sisa:</span><span id="pos-sisa-kasrw">0</span></div></div></div>
                 <div class="bg-pink-50/60 border border-pink-100 p-3 rounded-lg"><div class="text-[10px] font-bold text-pink-900 uppercase tracking-wide border-b border-pink-200 pb-1 mb-1.5 flex justify-between"><span>Dansos RT</span> <span id="card-label-dansos" class="bg-pink-200 text-pink-800 px-1 rounded">7rb</span></div><div class="space-y-0.5 text-[10px]"><div class="flex justify-between text-gray-600"><span>In:</span><span id="pos-masuk-dansos" class="text-emerald-700">0</span></div><div class="flex justify-between text-gray-600"><span>Out:</span><span id="pos-keluar-dansos" class="text-rose-700">0</span></div><div class="flex justify-between font-bold text-pink-900 pt-1 border-t border-pink-200 text-xs"><span>Sisa:</span><span id="pos-sisa-dansos">0</span></div></div></div>
@@ -155,7 +155,7 @@
             </div>
         </div>
 
-        <!-- PANEL BARU: MONITORING TUNGGAKAN IURAN -->
+        <!-- PANEL MONITORING TUNGGAKAN -->
         <div id="panel-tunggakan" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 hidden no-print">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div>
@@ -183,9 +183,7 @@
                             <th class="px-4 py-3 text-center bg-rose-100 rounded-tr-lg">Estimasi KK Belum Bayar</th>
                         </tr>
                     </thead>
-                    <tbody id="tabel-tunggakan-body" class="divide-y divide-gray-100">
-                        <!-- Rendered by JS -->
-                    </tbody>
+                    <tbody id="tabel-tunggakan-body" class="divide-y divide-gray-100"></tbody>
                     <tfoot class="bg-rose-600 text-white font-bold text-sm">
                         <tr>
                             <td class="px-4 py-3 rounded-bl-lg">TOTAL KESELURUHAN</td>
@@ -221,8 +219,9 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full lg:w-auto justify-end">
+                <!-- TOMBOL REFRESH MUTASI DI-PERBAIKI -->
                 <button onclick="muatDataKeuangan()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <i id="icon-refresh-mutasi" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                     <span>Refresh Mutasi</span>
                 </button>
             </div>
@@ -266,25 +265,27 @@
             </div>
         </div>
     </div>
+
     <!-- FOOTER -->
     <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
         <p>&copy; 2026 Pengurus RT 005 / RW 018. Perumahan Mustika Media Residence, Desa Lubang Buaya, Setu, Bekasi.</p>
     </footer>
-    <!-- JAVASCRIPT -->
+
+    <!-- JAVASCRIPT KESELURUHAN -->
     <script>
         lucide.createIcons();
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-        // 1. TARIF 7 POS TERBARU
+        // TARIF 7 POS TERBARU
         let TARIF_KAS_RT = 7000;
         let TARIF_KAS_RW = 2000;
-        let TARIF_DANSOS = 7000; // Atau 4500 menyesuaikan sheet Anda
+        let TARIF_DANSOS = 7000;
         let TARIF_DUKA   = 2500;
-        let TARIF_K3     = 15500; // Atau 18000 menyesuaikan sheet
+        let TARIF_K3     = 15500;
         let TARIF_THRK3  = 1000;
-        let TARIF_KEAMANAN = 10000; // Atau 15000 menyesuaikan sheet
+        let TARIF_KEAMANAN = 10000;
 
         let dataPosRT = [
             { rt: 'Salak 11', kk: 32 },
@@ -294,7 +295,6 @@
 
         function formatSingkat(angka) { return (angka / 1000) + 'rb'; }
         function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka); }
-        // Dibulatkan agar tidak ada angka desimal berantakan
         function formatRingkas(angka) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(angka); }
 
         function salinRekening() {
@@ -310,14 +310,15 @@
             document.body.classList.remove('print-only-tunggakan');
         }
 
-        // ============================================
-        // MASUKKAN LINK API SHEETDB DI BAWAH INI
-        // ============================================
+        // LINK API SHEETDB
         const API_GANG = "https://sheetdb.io/api/v1/puojdsvw5hc71?sheet=Data%20Gang";
         const API_TRANSAKSI = "https://sheetdb.io/api/v1/puojdsvw5hc71";
 
         function muatDataRT() {
-            fetch(API_GANG)
+            const icon = document.getElementById('icon-refresh-rt');
+            if (icon) icon.classList.add('animate-spin');
+
+            return fetch(API_GANG)
                 .then(res => { if (!res.ok) throw new Error("Gagal ambil gang"); return res.json(); })
                 .then(data => {
                     if (data && data.length > 0) {
@@ -345,6 +346,8 @@
                     console.warn("Pakai fallback Gang:", err);
                     renderTabelPos();
                     hitungKasPerPos();
+                }).finally(() => {
+                    if (icon) icon.classList.remove('animate-spin');
                 });
         }
 
@@ -414,6 +417,9 @@
         let daftarTransaksi = [];
 
         function muatDataKeuangan() {
+            const icon = document.getElementById('icon-refresh-mutasi');
+            if (icon) icon.classList.add('animate-spin');
+
             muatDataRT();
             fetch(API_TRANSAKSI)
                 .then(res => { if(!res.ok) throw new Error("Gagal data"); return res.json(); })
@@ -431,6 +437,8 @@
                     hitungKasPerPos();
                 }).catch(err => {
                     console.warn("Gagal tarik transaksi", err);
+                }).finally(() => {
+                    if (icon) icon.classList.remove('animate-spin');
                 });
         }
 
@@ -481,13 +489,11 @@
             updateCard('duka', p.duka); updateCard('k3', p.k3); updateCard('thrk3', p.thr); updateCard('keamanan', p.aman);
         }
 
-        // FUNGSI BARU: HITUNG TUNGGAKAN
         function hitungTunggakan(dataTerfilter) {
             const panelTunggakan = document.getElementById('panel-tunggakan');
             const tbody = document.getElementById('tabel-tunggakan-body');
             const filter = document.getElementById('filter-bulan').value;
             
-            // Jika filter "Semua Bulan", sembunyikan fitur tunggakan karena tidak valid
             if (filter === 'semua') {
                 panelTunggakan.classList.add('hidden');
                 return;
@@ -504,7 +510,6 @@
                 let targetBlock = gang.kk * totalTarif;
                 let uangMasukBlock = 0;
                 
-                // Cari transaksi pemasukan di bulan yang dipilih yang namanya mengandung nama gang (contoh: "Iuran Salak 11")
                 dataTerfilter.forEach(trx => {
                     if (trx.jenis === 'pemasukan' && trx.keterangan.toLowerCase().includes(gang.rt.toLowerCase())) {
                         uangMasukBlock += trx.jumlah;
@@ -512,7 +517,7 @@
                 });
 
                 let tunggakan = targetBlock - uangMasukBlock;
-                if (tunggakan < 0) tunggakan = 0; // Jika bayar lebih/lunas
+                if (tunggakan < 0) tunggakan = 0;
                 
                 let estimasiKK = Math.floor(tunggakan / totalTarif);
 
@@ -548,13 +553,13 @@
             
             let sAwal = 0, tMasuk = 0, tKeluar = 0;
             let list = [];
-            let dataTunggakanBulanan = []; // Menyimpan transaksi khusus bulan yg difilter
+            let dataTunggakanBulanan = [];
 
             daftarTransaksi.forEach(item => {
                 if (filter !== 'semua' && item.tanggal < filter + '-01') {
                     if (item.jenis === 'pemasukan') sAwal += item.jumlah; else sAwal -= item.jumlah;
                 } else if (filter === 'semua' || item.tanggal.startsWith(filter)) {
-                    dataTunggakanBulanan.push(item); // Kumpulkan untuk dihitung tunggakannya
+                    dataTunggakanBulanan.push(item);
                     if(!key || item.keterangan.toLowerCase().includes(key) || item.pos.toLowerCase().includes(key)){
                         list.push(item);
                         if (item.jenis === 'pemasukan') tMasuk += item.jumlah; else tKeluar += item.jumlah;
@@ -598,7 +603,6 @@
             document.getElementById('total-pengeluaran').innerText = formatRupiah(tKeluar);
             document.getElementById('saldo-kas').innerText = formatRupiah(sAwal + tMasuk - tKeluar);
             
-            // Panggil fungsi tunggakan
             hitungTunggakan(dataTunggakanBulanan);
             lucide.createIcons();
         }
@@ -619,19 +623,19 @@
         muatDataKeuangan();
     </script>
     <script>
-  // Blokir Klik Kanan
-  document.addEventListener('contextmenu', e => e.preventDefault());
+      // Blokir Klik Kanan
+      document.addEventListener('contextmenu', e => e.preventDefault());
 
-  // Blokir F12, Ctrl+Shift+I (Inspect), dan Ctrl+U (View Source)
-  document.addEventListener('keydown', function(e) {
-    if (
-      e.key === "F12" || 
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) || 
-      (e.ctrlKey && e.key === 'u')
-    ) {
-      e.preventDefault();
-    }
-  });
-</script>
+      // Blokir F12, Ctrl+Shift+I, dll.
+      document.addEventListener('keydown', function(e) {
+        if (
+          e.key === "F12" || 
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) || 
+          (e.ctrlKey && e.key === 'u')
+        ) {
+          e.preventDefault();
+        }
+      });
+    </script>
 </body>
 </html>
