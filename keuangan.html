@@ -9,18 +9,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @media print {
-            @page { size: A4 landscape; margin: 10mm; }
-            nav, footer, #mobile-menu, .no-print { display: none !important; }
-            body { background-color: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
-            .max-w-7xl { max-width: 100% !important; padding: 0 !important; }
-            .pt-28 { padding-top: 0 !important; }
-            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
-            th, td { border: 1px solid #e5e7eb !important; padding: 4px 6px !important; }
-            .shadow-sm, .rounded-xl, .rounded-2xl { box-shadow: none !important; }
-            
-            .print-only-tunggakan body * { visibility: hidden; }
-            .print-only-tunggakan #panel-tunggakan, .print-only-tunggakan #panel-tunggakan * { visibility: visible; }
-            .print-only-tunggakan #panel-tunggakan { position: absolute; left: 0; top: 0; width: 100%; }
+            @page { 
+                margin: 8mm; 
+            }
+
+            nav, footer, #mobile-menu, .no-print { 
+                display: none !important; 
+            }
+
+            body { 
+                background-color: white !important; 
+                color: black !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100% !important;
+            }
+
+            .max-w-7xl, .max-w-md, div { 
+                max-width: 100% !important; 
+                width: 100% !important; 
+                padding-left: 0 !important; 
+                padding-right: 0 !important; 
+            }
+
+            .pt-28 { 
+                padding-top: 0 !important; 
+            }
+
+            /* PAKSA 4 KARTU SEJAJAR MENYAMPING SAAT DICETAK */
+            .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-4 {
+                display: grid !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-4 > div {
+                padding: 10px 12px !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 8px !important;
+            }
+
+            .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-4 .text-xs {
+                font-size: 8px !important;
+            }
+
+            .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-4 .text-xl {
+                font-size: 14px !important;
+                margin-top: 2px !important;
+            }
+
+            table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                font-size: 10px !important; 
+            }
+
+            th, td { 
+                border: 1px solid #e5e7eb !important; 
+                padding: 4px 6px !important; 
+            }
+
+            .shadow-sm, .rounded-xl, .rounded-2xl { 
+                box-shadow: none !important; 
+            }
         }
     </style>
 </head>
@@ -153,55 +205,11 @@
             </div>
         </div>
 
-        <!-- PANEL MONITORING TUNGGAKAN -->
-        <div id="panel-tunggakan" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 hidden no-print">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-rose-600 shrink-0"></i>
-                        <span>Realisasi & Sisa Tunggakan Iuran (Bulan <span id="lbl-bulan-tunggakan">Ini</span>)</span>
-                    </h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Monitoring target pembayaran dari tiap blok berdasarkan total Tarif KK.</p>
-                </div>
-                <button onclick="cetakTunggakan()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5 border border-rose-200">
-                    <i data-lucide="printer" class="w-4 h-4"></i>
-                    <span>Cetak Tunggakan</span>
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-rose-50 text-rose-900 font-semibold border-b border-rose-200">
-                        <tr>
-                            <th class="px-4 py-3 rounded-tl-lg">Blok / Gang</th>
-                            <th class="px-4 py-3 text-center">Jml KK</th>
-                            <th class="px-4 py-3 text-right">Target Iuran</th>
-                            <th class="px-4 py-3 text-right text-emerald-700">Sudah Masuk</th>
-                            <th class="px-4 py-3 text-right text-rose-600">Sisa Tunggakan</th>
-                            <th class="px-4 py-3 text-center bg-rose-100 rounded-tr-lg">Estimasi KK Belum Bayar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabel-tunggakan-body" class="divide-y divide-gray-100"></tbody>
-                    <tfoot class="bg-rose-600 text-white font-bold text-sm">
-                        <tr>
-                            <td class="px-4 py-3 rounded-bl-lg">TOTAL KESELURUHAN</td>
-                            <td id="tg-tot-kk" class="px-4 py-3 text-center">0</td>
-                            <td id="tg-tot-target" class="px-4 py-3 text-right">Rp 0</td>
-                            <td id="tg-tot-masuk" class="px-4 py-3 text-right text-emerald-200">Rp 0</td>
-                            <td id="tg-tot-sisa" class="px-4 py-3 text-right text-yellow-200">Rp 0</td>
-                            <td id="tg-tot-kk-sisa" class="px-4 py-3 text-center rounded-br-lg">0 KK</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
         <!-- FILTER & TRANSAKSI -->
         <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <label for="filter-bulan" class="text-xs font-semibold text-gray-500 whitespace-nowrap">Bulan:</label>
-                    <!-- DROPDOWN OTOMATIS GENERATE VIA JS -->
                     <select id="filter-bulan" onchange="renderTabel()" class="p-2 border rounded-lg text-sm w-full sm:w-auto bg-gray-50 outline-none">
                        <option value="semua">Semua Bulan</option>
                      </select>
@@ -289,7 +297,6 @@
         function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka); }
         function formatRingkas(angka) { return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(angka); }
 
-        // PERBAIKAN 1: FORMAT TANGGAL INDONESIA
         function formatTanggal(strTanggal) {
             if (!strTanggal) return '-';
             const date = new Date(strTanggal);
@@ -302,12 +309,6 @@
             const btn = document.getElementById('btn-copy-text');
             btn.innerText = "Tersalin!";
             setTimeout(() => { btn.innerText = "Salin No. Rekening"; }, 2000);
-        }
-
-        function cetakTunggakan() {
-            document.body.classList.add('print-only-tunggakan');
-            window.print();
-            document.body.classList.remove('print-only-tunggakan');
         }
 
         // LINK API SHEETDB
@@ -414,16 +415,13 @@
             document.getElementById('foot-total-setoran').innerText = formatRupiah(grand.total);
         }
 
-        let daftarTransaksi = [];
-
-        // PERBAIKAN 2: GENERATE OTOMATIS DROPDOWN BULAN DARI DATA SHEETDB
         function perbaruiOptionBulan() {
             const select = document.getElementById('filter-bulan');
             const setBulan = new Set();
             
             daftarTransaksi.forEach(item => {
                 if (item.tanggal && item.tanggal.length >= 7) {
-                    setBulan.add(item.tanggal.substring(0, 7)); // Format YYYY-MM
+                    setBulan.add(item.tanggal.substring(0, 7)); // YYYY-MM
                 }
             });
 
@@ -457,12 +455,11 @@
                     }));
                     daftarTransaksi.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
                     
-                    perbaruiOptionBulan(); // Panggil regenerasi dropdown bulan
+                    perbaruiOptionBulan();
                     renderTabel();
                     hitungKasPerPos();
                 }).catch(err => {
                     console.warn("Gagal tarik transaksi", err);
-                    // PERBAIKAN 3: ERROR HANDLING VISUAL SAAT DATA GAGAL DITARIK
                     document.getElementById('tabel-transaksi-body').innerHTML = `
                         <tr>
                             <td colspan="6" class="px-6 py-8 text-center text-rose-600 font-medium">
@@ -521,62 +518,6 @@
             updateCard('duka', p.duka); updateCard('k3', p.k3); updateCard('thrk3', p.thr); updateCard('keamanan', p.aman);
         }
 
-        function hitungTunggakan(dataTerfilter) {
-            const panelTunggakan = document.getElementById('panel-tunggakan');
-            const tbody = document.getElementById('tabel-tunggakan-body');
-            const filter = document.getElementById('filter-bulan').value;
-            
-            if (filter === 'semua') {
-                panelTunggakan.classList.add('hidden');
-                return;
-            }
-            
-            panelTunggakan.classList.remove('hidden');
-            document.getElementById('lbl-bulan-tunggakan').innerText = filter;
-            tbody.innerHTML = '';
-            
-            let totalTarif = TARIF_KAS_RT + TARIF_KAS_RW + TARIF_DANSOS + TARIF_DUKA + TARIF_K3 + TARIF_THRK3 + TARIF_KEAMANAN;
-            let sumKK = 0, sumTarget = 0, sumMasuk = 0, sumSisa = 0, sumKKSisa = 0;
-
-            dataPosRT.forEach(gang => {
-                let targetBlock = gang.kk * totalTarif;
-                let uangMasukBlock = 0;
-                
-                dataTerfilter.forEach(trx => {
-                    if (trx.jenis === 'pemasukan' && trx.keterangan.toLowerCase().includes(gang.rt.toLowerCase())) {
-                        uangMasukBlock += trx.jumlah;
-                    }
-                });
-
-                let tunggakan = targetBlock - uangMasukBlock;
-                if (tunggakan < 0) tunggakan = 0;
-                
-                let estimasiKK = Math.floor(tunggakan / totalTarif);
-
-                sumKK += gang.kk; sumTarget += targetBlock; sumMasuk += uangMasukBlock; 
-                sumSisa += tunggakan; sumKKSisa += estimasiKK;
-
-                let isLunas = tunggakan === 0;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-rose-50 transition">
-                        <td class="px-4 py-3 font-semibold text-gray-800">${gang.rt}</td>
-                        <td class="px-4 py-3 text-center">${gang.kk}</td>
-                        <td class="px-4 py-3 text-right">${formatRupiah(targetBlock)}</td>
-                        <td class="px-4 py-3 text-right font-semibold text-emerald-600">${formatRupiah(uangMasukBlock)}</td>
-                        <td class="px-4 py-3 text-right font-bold ${isLunas ? 'text-gray-400' : 'text-rose-600'}">${isLunas ? 'LUNAS' : formatRupiah(tunggakan)}</td>
-                        <td class="px-4 py-3 text-center ${isLunas ? 'text-gray-400' : 'font-bold text-rose-600 bg-rose-50'}">${isLunas ? '-' : estimasiKK + ' KK'}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('tg-tot-kk').innerText = sumKK;
-            document.getElementById('tg-tot-target').innerText = formatRupiah(sumTarget);
-            document.getElementById('tg-tot-masuk').innerText = formatRupiah(sumMasuk);
-            document.getElementById('tg-tot-sisa').innerText = formatRupiah(sumSisa);
-            document.getElementById('tg-tot-kk-sisa').innerText = sumKKSisa + ' KK';
-        }
-
         function renderTabel() {
             const tbody = document.getElementById('tabel-transaksi-body');
             const filter = document.getElementById('filter-bulan').value;
@@ -585,13 +526,11 @@
             
             let sAwal = 0, tMasuk = 0, tKeluar = 0;
             let list = [];
-            let dataTunggakanBulanan = [];
 
             daftarTransaksi.forEach(item => {
                 if (filter !== 'semua' && item.tanggal < filter + '-01') {
                     if (item.jenis === 'pemasukan') sAwal += item.jumlah; else sAwal -= item.jumlah;
                 } else if (filter === 'semua' || item.tanggal.startsWith(filter)) {
-                    dataTunggakanBulanan.push(item);
                     if(!key || item.keterangan.toLowerCase().includes(key) || item.pos.toLowerCase().includes(key)){
                         list.push(item);
                         if (item.jenis === 'pemasukan') tMasuk += item.jumlah; else tKeluar += item.jumlah;
@@ -635,11 +574,9 @@
             document.getElementById('total-pengeluaran').innerText = formatRupiah(tKeluar);
             document.getElementById('saldo-kas').innerText = formatRupiah(sAwal + tMasuk - tKeluar);
             
-            hitungTunggakan(dataTunggakanBulanan);
             lucide.createIcons();
         }
 
-        // PERBAIKAN 4: CONVERT URL GOOGLE DRIVE DENGAN PENANGANAN ERROR BUKTI STRUK
         function bukaModalBukti(judul, tanggal, url) {
             document.getElementById('modal-judul').innerText = judul;
             document.getElementById('modal-sub').innerText = 'Tanggal: ' + formatTanggal(tanggal);
